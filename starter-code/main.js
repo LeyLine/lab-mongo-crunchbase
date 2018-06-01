@@ -21,10 +21,23 @@ mongoClient.connect(url, (error, db) => {
       printMenu();
       rl.question('Type an option: ', (option) => {
         switch (option) {
+          //We are getting an empty array here 
           case "1":
-            console.log('you typed 1');
-            rl.question(`\nType enter to continue: `, (answer) => {
-              mainMenu();
+            db.collection('companies').find({}, {
+              name: 1,
+              _id: 0
+            }).toArray((error, result) => {
+              if (error) {
+                console.log(error);
+                rl.question(`\nType enter to continue: `, (answer) => {
+                  mainMenu();
+                });
+              } else {
+                console.log(result);
+                rl.question(`\nType enter to continue: `, (answer) => {
+                  mainMenu();
+                });
+              }
             });
             break;
           case "2":
