@@ -7,7 +7,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-const url = `mongodb://localhost:27017/crunchbase`;
+const url = `mongodb://localhost:27017/companies`;
 
 mongoClient.connect(url, (error, db) => {
   if (error) {
@@ -21,7 +21,6 @@ mongoClient.connect(url, (error, db) => {
       printMenu();
       rl.question('Type an option: ', (option) => {
         switch (option) {
-          //We are getting an empty array here 
           case "1":
             db.collection('companies').find({}, {
               name: 1,
@@ -38,7 +37,7 @@ mongoClient.connect(url, (error, db) => {
                   mainMenu();
                 });
               }
-            });
+            })
             break;
           case "2":
             console.log('you typed 2');
@@ -49,7 +48,7 @@ mongoClient.connect(url, (error, db) => {
           case "0":
             console.log(`👋👋👋👋 😞 \n`);
             db.close((error) => {
-              process.exit(0);
+              process.exit(0)
             });
             break;
           default:
