@@ -33,6 +33,7 @@ function printMenu() {
 }
 
 mongoClient.connect(url, (error, db) => {
+  const co = db.collection("companies");
   if (error) {
     console.log("Error trying to connect to the Database");
     console.log(error);
@@ -45,15 +46,11 @@ mongoClient.connect(url, (error, db) => {
       rl.question("Type an option: ", option => {
         switch (option) {
           case "1":
-            db
-              .collection("companies")
-              .find(
-                {},
-                {
-                  name: 1,
-                  _id: 0
-                }
-              )
+            co
+              .find({}, {
+                name: 1,
+                _id: 0
+              })
               .toArray((error, result) => {
                 if (error) {
                   console.log(error);
@@ -69,7 +66,7 @@ mongoClient.connect(url, (error, db) => {
               });
             break;
           case "2":
-            db.collection("companies").count((error, result) => {
+            co.count((error, result) => {
               if (error) {
                 console.log(error);
                 rl.question(`\nType enter to continue: `, answer => {
@@ -84,11 +81,175 @@ mongoClient.connect(url, (error, db) => {
             });
             break;
           case "3":
-            console.log(`👋👋👋👋 😞 \n`);
-            db.close(error => {
-              process.exit(0);
-            });
+            co
+              .find({
+                founded_year: 2004
+              })
+              .project({
+                name: 1,
+                founded_year: 1,
+                _id: 0
+              })
+              .toArray(function (err, docs) {
+                if (error) {
+                  console.log(error);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                } else {
+                  console.log("All The companies founded in 2004");
+                  console.log(docs);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                }
+              });
             break;
+
+            //List by name all companies founded in february of 2004.
+          case "4":
+            co
+              .find({
+                founded_year: 2004,
+                founded_month: 1
+              })
+              .project({
+                name: 1,
+                founded_year: 1,
+                _id: 0,
+                founded_month: 1
+              })
+              .toArray(function (err, docs) {
+                if (error) {
+                  console.log(error);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                } else {
+                  console.log("All The companies founded in 2004");
+                  console.log(docs);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                }
+              });
+
+            break;
+
+            //5.- List by name all companies founded in the summer of 2004 (april to june) sorted by date.
+          case "5":
+            co
+              .find({
+                founded_year: 2004,
+                founded_month: (4, 5, 6)
+              })
+              .project({
+                name: 1,
+                founded_year: 1,
+                _id: 0,
+                founded_month: 1,
+                founded_day: 1
+              })
+              .sort([
+                ["founded_month", 1],
+                ["founded_day", 1]
+              ])
+              .toArray(function (err, docs) {
+                if (error) {
+                  console.log(error);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                } else {
+                  console.log("All The companies founded in 2004");
+                  console.log(docs);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                }
+              });
+            break;
+
+            // 6.- What companies have offices in "Barcelona".
+          case "6":
+            co
+              .find({
+                "offices.city": "Barcelona"
+              })
+              .project({
+                name: 1,
+                _id: 0
+              })
+              .sort([
+                ["founded_month", 1],
+                ["founded_day", 1]
+              ])
+              .toArray(function (err, docs) {
+                if (error) {
+                  console.log(error);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                } else {
+                  console.log("All The companies founded in 2004");
+                  console.log(docs);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                }
+              });
+            break;
+
+            //8.- Find the company with the name "Facebook").
+          case "8":
+            co
+              .find({
+                name: "Facebook"
+              })
+              .project({
+                name: 1,
+                _id: 0
+              })
+              .toArray(function (err, docs) {
+                if (error) {
+                  console.log(error);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                } else {
+                  console.log(docs);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                }
+              });
+            break;
+            //9.- How many employees has Facebook?
+          case "9":
+            co
+              .find({
+                name: "Facebook"
+              })
+              .project({
+                number_of_employees: 1,
+                _id: 0
+              })
+              .toArray(function (err, docs) {
+                if (error) {
+                  console.log(error);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                } else {
+                  console.log(docs);
+                  rl.question(`\nType enter to continue: `, answer => {
+                    mainMenu();
+                  });
+                }
+              });
+            break;
+
+
           default:
             mainMenu();
             break;
